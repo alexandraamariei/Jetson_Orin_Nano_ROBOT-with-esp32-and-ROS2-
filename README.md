@@ -1,8 +1,10 @@
-# Autonomous ROS 2 Mobile Robot (Jetson + ESP32)
+# 🤖 Autonomous ROS 2 Mobile Robot (Jetson + ESP32)
 
 This repository contains the software and hardware configuration for an autonomous mobile robot powered by an NVIDIA Jetson and an ESP32 microcontroller. The system uses ROS 2 for high-level logic, mapping, and navigation, while the ESP32 handles real-time motor control and encoder feedback via Micro-ROS.
 
-## Hardware Architecture
+---
+
+## ⚙️ Hardware Architecture
 
 ### Core Components
 * **High-Level Compute:** NVIDIA Jetson (running ROS 2 and Micro-ROS Agent)
@@ -21,88 +23,99 @@ This repository contains the software and hardware configuration for an autonomo
 
 | Component | ESP32 Pin | Description |
 | :--- | :--- | :--- |
-| L298N IN1 | `[ADD_PIN]` | Motor Left Forward |
-| L298N IN2 | `[ADD_PIN]` | Motor Left Backward |
-| L298N IN3 | `[ADD_PIN]` | Motor Right Forward |
-| L298N IN4 | `[ADD_PIN]` | Motor Right Backward |
-| Encoder Left A | `[ADD_PIN]` | Odometry tick (Hardware Interrupt) |
-| Encoder Left B | `[ADD_PIN]` | Odometry direction |
-| Encoder Right A | `[ADD_PIN]` | Odometry tick (Hardware Interrupt) |
-| Encoder Right B | `[ADD_PIN]` | Odometry direction |
+| **L298N IN1** | `[ADD_PIN]` | Motor Left Forward |
+| **L298N IN2** | `[ADD_PIN]` | Motor Left Backward |
+| **L298N IN3** | `[ADD_PIN]` | Motor Right Forward |
+| **L298N IN4** | `[ADD_PIN]` | Motor Right Backward |
+| **Encoder Left A** | `[ADD_PIN]` | Odometry tick (Hardware Interrupt) |
+| **Encoder Left B** | `[ADD_PIN]` | Odometry direction |
+| **Encoder Right A** | `[ADD_PIN]` | Odometry tick (Hardware Interrupt) |
+| **Encoder Right B** | `[ADD_PIN]` | Odometry direction |
 
-## Software Architecture
+---
+
+## 💻 Software Architecture
 
 The project is structured to maintain a clean separation between high-level computation and low-level hardware control.
 
 ### 1. The Firmware (`esp32_motor_control/`)
-A PlatformIO project containing the C++ Micro-ROS firmware. It acts as the robot's spinal cord, subscribing to `/cmd_vel` to generate PWM signals for the L298N, and reading hardware interrupts from the encoders to publish raw tick data back to the Jetson.
+A PlatformIO project containing the **C++ Micro-ROS firmware**. It acts as the robot's spinal cord, subscribing to `/cmd_vel` to generate PWM signals for the L298N, and reading hardware interrupts from the encoders to publish raw tick data back to the Jetson.
 
 ### 2. The ROS 2 Workspace (`src/`)
 Deployed on the NVIDIA Jetson, this workspace is divided into modular packages:
 
-*   **`turtlebot_bringup`**: The core orchestrator. It contains the main launch files that start the Micro-ROS Docker agent and load all necessary base parameters.
-*   **`turtlebot_hardware`**: The software bridge. It contains nodes like the `odom_calculator` which listens to the raw encoder ticks from the ESP32, applies the robot's physical kinematics (wheel radius, baseline), and translates them into standard ROS 2 `/odom` (Odometry) messages.
-*   **`turtlebot_description`**: The physical blueprint. It contains the URDF (Unified Robot Description Format) files, which define the robot's 3D geometry, joint limits, and sensor placements (TF transforms).
-*   **`turtlebot_navigation`**: The autonomous brain. Contains configurations and launch files for SLAM (Simultaneous Localization and Mapping) to build maps of unknown environments, and Nav2 to calculate paths and avoid obstacles.
+* **`turtlebot_bringup`**: The core orchestrator. It contains the main launch files that start the Micro-ROS Docker agent and load all necessary base parameters.
+* **`turtlebot_hardware`**: The software bridge. It contains nodes like the `odom_calculator` which listens to the raw encoder ticks from the ESP32, applies the robot's physical kinematics (wheel radius, baseline), and translates them into standard ROS 2 `/odom` (Odometry) messages.
+* **`turtlebot_description`**: The physical blueprint. It contains the URDF (Unified Robot Description Format) files, which define the robot's 3D geometry, joint limits, and sensor placements (TF transforms).
+* **`turtlebot_navigation`**: The autonomous brain. Contains configurations and launch files for SLAM (Simultaneous Localization and Mapping) to build maps of unknown environments, and Nav2 to calculate paths and avoid obstacles.
 
-## Prerequisites & Installation
+---
+
+## 🛠️ Prerequisites & Installation
 
 ### Jetson Setup (ROS 2)
 1. Navigate to your ROS 2 workspace and clone the repository:
    ```bash
    git clone <YOUR_GITHUB_REPOSITORY_URL>
-
-Build the ROS 2 packages:
-
+   ```
+2. Build the ROS 2 packages:
    ```bash
    colcon build
    source install/setup.bash
+   ```
 
-ESP32 Setup (Firmware)
-1.Open the esp32_motor_control directory in VS Code with the PlatformIO extension installed.
+### ESP32 Setup (Firmware)
+1. Open the `esp32_motor_control` directory in **VS Code** with the **PlatformIO** extension installed.
+2. Update the pin definitions in `src/main.cpp`.
+3. Connect the ESP32 via USB, then **Build** and **Upload** the firmware.
 
-2.Update the pin definitions in src/main.cpp.
+---
 
-3.Connect the ESP32 via USB, then Build and Upload the firmware.
+## 🚀 Running the System
 
-Running the System
 Depending on your goal, you will launch different parts of the system.
 
-1. Waking Up the Robot (Bringup)
-Why: This is the foundational step. It opens the serial port, establishes the Micro-ROS connection with the ESP32, and starts calculating odometry. Without this, the robot is blind and paralyzed.
-Command:
+### 1. Waking Up the Robot (Bringup)
+**Why:** This is the foundational step. It opens the serial port, establishes the Micro-ROS connection with the ESP32, and starts calculating odometry. Without this, the robot is blind and paralyzed.
 
-   ```bash
-   ros2 launch turtlebot_bringup robot.launch.py use_sim_time:=false
-Wait for the Session established log in the terminal before proceeding.
+**Command:**
+```bash
+ros2 launch turtlebot_bringup robot.launch.py use_sim_time:=false
+```
+> **Note:** Wait for the `Session established` log in the terminal before proceeding.
 
-2. Visualizing the Robot (Description)
-Why: To verify that the URDF transforms are working, allowing you to see a 3D model of your robot in RViz reacting to wheel movements in real-time.
-Command:
+### 2. Visualizing the Robot (Description)
+**Why:** To verify that the URDF transforms are working, allowing you to see a 3D model of your robot in RViz reacting to wheel movements in real-time.
 
-   ```bash
-   ros2 launch turtlebot_description display.launch.py
-3. Mapping a New Room (SLAM)
-Why: To drive the robot around manually (using teleop) while a LiDAR or depth camera scans the room, generating a 2D floor plan (.yaml and .pgm files) for future autonomous navigation.
-Command:
+**Command:**
+```bash
+ros2 launch turtlebot_description display.launch.py
+```
 
-   ```bash
-   ros2 launch turtlebot_navigation slam.launch.py
-4. Autonomous Driving (Nav2)
-Why: To load a previously saved map and allow the robot to calculate its own paths. You click a destination in RViz, and the robot drives there automatically while dodging dynamic obstacles.
-Command:
+### 3. Mapping a New Room (SLAM)
+**Why:** To drive the robot around manually (using teleop) while a LiDAR or depth camera scans the room, generating a 2D floor plan (`.yaml` and `.pgm` files) for future autonomous navigation.
 
-   ```bash
-   ros2 launch turtlebot_navigation nav2.launch.py
-Headless Autostart Setup (Systemd)
-To achieve true autonomy without requiring an SSH connection to start the software, this project utilizes a Linux systemd service (robot.service).
+**Command:**
+```bash
+ros2 launch turtlebot_navigation slam.launch.py
+```
 
-When the 11.1V battery is connected:
+### 4. Autonomous Driving (Nav2)
+**Why:** To load a previously saved map and allow the robot to calculate its own paths. You click a destination in RViz, and the robot drives there automatically while dodging dynamic obstacles.
 
-The Jetson boots up automatically.
+**Command:**
+```bash
+ros2 launch turtlebot_navigation nav2.launch.py
+```
 
-The robot.service triggers in the background, executing the turtlebot_bringup launch file.
+---
 
-The Micro-ROS agent establishes a connection with the ESP32 over USB.
+## 🔋 Headless Autostart Setup (Systemd)
 
-The robot enters a standby state, fully connected to the Wi-Fi network and ready to receive /cmd_vel commands or Nav2 goals remotely from a base station laptop.
+To achieve true autonomy without requiring an SSH connection to start the software, this project utilizes a Linux `systemd` service (`robot.service`).
+
+**When the 11.1V battery is connected:**
+1. The Jetson boots up automatically.
+2. The `robot.service` triggers in the background, executing the `turtlebot_bringup` launch file.
+3. The Micro-ROS agent establishes a connection with the ESP32 over USB.
+4. The robot enters a standby state, fully connected to the Wi-Fi network and ready to receive `/cmd_vel` commands or Nav2 goals remotely from a base station laptop.
