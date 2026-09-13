@@ -19,7 +19,6 @@ This repository contains the software and hardware configuration for an autonomo
 * **Data:** The Jetson and ESP32 communicate via a direct **Serial-over-USB** connection, guaranteeing real-time stability and zero wireless latency for high-frequency odometry and motor commands.
 
 ### ESP32 Pin Configuration
-*(Update these pins based on your specific wiring before uploading the firmware)*
 
 | Component | ESP32 Pin | Description |
 | :--- | :--- | :--- |
