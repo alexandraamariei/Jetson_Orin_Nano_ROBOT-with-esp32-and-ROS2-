@@ -71,8 +71,9 @@ Deployed on the NVIDIA Jetson, this workspace is divided into modular packages:
 
 ---
 
-![Picture](docs/robot2.jpeg)
-![Picture](docs/robot3.jpeg)
+| Poza Robotului | Schema Electrică |
+| :---: | :---: |
+| ![](docs/robot2.jpg) | ![](docs/robot3.png) |
 ## 🚀 Running the System
 
 Depending on your goal, you will launch different parts of the system.
