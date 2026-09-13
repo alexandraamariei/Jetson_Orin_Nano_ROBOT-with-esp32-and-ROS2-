@@ -23,14 +23,14 @@ This repository contains the software and hardware configuration for an autonomo
 
 | Component | ESP32 Pin | Description |
 | :--- | :--- | :--- |
-| **L298N IN1** | `[ADD_PIN]` | Motor Left Forward |
-| **L298N IN2** | `[ADD_PIN]` | Motor Left Backward |
-| **L298N IN3** | `[ADD_PIN]` | Motor Right Forward |
-| **L298N IN4** | `[ADD_PIN]` | Motor Right Backward |
-| **Encoder Left A** | `[ADD_PIN]` | Odometry tick (Hardware Interrupt) |
-| **Encoder Left B** | `[ADD_PIN]` | Odometry direction |
-| **Encoder Right A** | `[ADD_PIN]` | Odometry tick (Hardware Interrupt) |
-| **Encoder Right B** | `[ADD_PIN]` | Odometry direction |
+| **L298N IN1** | `5` | Motor Left Forward |
+| **L298N IN2** | `18` | Motor Left Backward |
+| **L298N IN3** | `26` | Motor Right Forward |
+| **L298N IN4** | `32` | Motor Right Backward |
+| **Encoder Left A** | `13` | Odometry tick (Hardware Interrupt) |
+| **Encoder Left B** | `4` | Odometry direction |
+| **Encoder Right A** | `22` | Odometry tick (Hardware Interrupt) |
+| **Encoder Right B** | `23` | Odometry direction |
 
 ---
 
