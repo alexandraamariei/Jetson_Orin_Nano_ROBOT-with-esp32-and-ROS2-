@@ -70,7 +70,7 @@ Deployed on the NVIDIA Jetson, this workspace is divided into modular packages:
 3. Connect the ESP32 via USB, then **Build** and **Upload** the firmware.
 
 ---
-
+![Picture](docs/robot.jpg)
 ## 🚀 Running the System
 
 Depending on your goal, you will launch different parts of the system.
