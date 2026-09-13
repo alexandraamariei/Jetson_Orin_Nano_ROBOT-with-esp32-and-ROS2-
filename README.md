@@ -71,9 +71,9 @@ Deployed on the NVIDIA Jetson, this workspace is divided into modular packages:
 
 ---
 
-| Poza Robotului | Schema Electrică |
+| ESP32 | The robot |
 | :---: | :---: |
-| ![](docs/robot2.jpg) | ![](docs/robot3.png) |
+| ![](docs/robot2.jpeg) | ![](docs/robot3.jpeg) |
 ## 🚀 Running the System
 
 Depending on your goal, you will launch different parts of the system.
