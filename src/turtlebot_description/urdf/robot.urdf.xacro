@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="turtlebot_burger">
+
+    <!-- MATERIALE -->
+    <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+    <material name="blue"><color rgba="0.2 0.2 0.8 1"/></material>
+    
+    <!-- LINK DE BAZĂ -->
+    <link name="base_link"/>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="chassis"/>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+    </joint>
+
+    <!-- STRUCTURA MECANICĂ (Șasiul) -->
+    <link name="chassis">
+        <visual>
+            <origin xyz="0 0 0.10" rpy="0 0 0"/>
+            <geometry><box size="0.14 0.14 0.20"/></geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.10" rpy="0 0 0"/>
+            <geometry><box size="0.14 0.14 0.20"/></geometry>
+        </collision>
+        <inertial>
+            <!-- Centrul de greutate  -->
+            <origin xyz="-0.02 0 0.03" rpy="0 0 0"/>
+            <mass value="1.0"/>
+            <inertia ixx="0.0049" ixy="0.0" ixz="0.0" iyy="0.0049" iyz="0.0" izz="0.0032"/>
+        </inertial>
+    </link>
+
+    <!-- ROATA STÂNGĂ -->
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="chassis"/>
+        <child link="left_wheel"/>
+        <origin xyz="0.04 0.08 0" rpy="-1.5708 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="left_wheel">
+        <visual>
+            <geometry><cylinder radius="0.033" length="0.02"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry><cylinder radius="0.033" length="0.02"/></geometry>
+        </collision>
+        <inertial>
+            <mass value="0.05"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- ROATA DREAPTĂ -->
+    <joint name="right_wheel_joint" type="continuous">
+        <parent link="chassis"/>
+        <child link="right_wheel"/>
+        <origin xyz="0.04 -0.08 0" rpy="-1.5708 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="right_wheel">
+        <visual>
+            <geometry><cylinder radius="0.033" length="0.02"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry><cylinder radius="0.033" length="0.02"/></geometry>
+        </collision>
+        <inertial>
+            <mass value="0.05"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- ROATA DE SPRIJIN (Caster Wheel) -->
+    <joint name="caster_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel"/>
+        <origin xyz="-0.07 0 -0.018" rpy="0 0 0"/>
+    </joint>
+
+    <link name="caster_wheel">
+        <visual>
+            <geometry><sphere radius="0.015"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry><sphere radius="0.015"/></geometry>
+        </collision>
+        <inertial>
+            <mass value="0.05"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- SENZORUL LIDAR -->
+    <joint name="lidar_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="laser_frame"/>
+        
+        <origin xyz="0 0 0.20" rpy="0 0 0"/> 
+    </joint>
+
+    <link name="laser_frame">
+        <visual>
+            <geometry><cylinder radius="0.035" length="0.04"/></geometry>
+            <material name="black"/>
+        </visual>
+    </link>
+
+   <!-- ===========================-->
+    <!-- PLUGIN-URILE GAZEBO       -->
+    <!-- ==========================-->
+
+    <gazebo>
+        <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+            <left_joint>left_wheel_joint</left_joint>
+            <right_joint>right_wheel_joint</right_joint>
+            <wheel_separation>0.160</wheel_separation>
+            <wheel_radius>0.033</wheel_radius>
+            
+            <max_linear_velocity>0.25</max_linear_velocity>
+            <max_angular_velocity>0.8</max_angular_velocity>
+            <max_linear_acceleration>0.3</max_linear_acceleration> 
+            <max_angular_acceleration>0.5</max_angular_acceleration>
+            
+            
+            <topic>/cmd_vel</topic>
+            <odom_topic>/odom</odom_topic>
+            <tf_topic>/tf</tf_topic>
+            <frame_id>odom</frame_id>
+            <child_frame_id>base_link</child_frame_id>
+            <odom_publish_frequency>30</odom_publish_frequency>
+        </plugin>
+        
+        <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+            <topic>/joint_states</topic>
+            <joint_name>left_wheel_joint</joint_name>
+            <joint_name>right_wheel_joint</joint_name>
+        </plugin>
+    </gazebo>
+
+    <gazebo reference="caster_wheel">
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+    </gazebo>
+
+    <gazebo reference="laser_frame">
+        <sensor name="lidar" type="gpu_lidar">
+            
+            <topic>/scan</topic>
+            <update_rate>10</update_rate>
+            <gz_frame_id>laser_frame</gz_frame_id>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.15</min>
+                    <max>8.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+            </ray>
+            <always_on>1</always_on>
+            <visualize>true</visualize>
+        </sensor>
+    </gazebo>
+    <!-- MOTORUL DE SENZORI  -->
+    <gazebo>
+        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+    </gazebo>
+</robot>
