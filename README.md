@@ -54,9 +54,9 @@ Deployed on the NVIDIA Jetson, this workspace is divided into modular packages:
 
 Build the ROS 2 packages:
 
-Bash
-colcon build
-source install/setup.bash
+   ```bash
+   colcon build
+   source install/setup.bash
 
 ESP32 Setup (Firmware)
 1.Open the esp32_motor_control directory in VS Code with the PlatformIO extension installed.
@@ -72,28 +72,28 @@ Depending on your goal, you will launch different parts of the system.
 Why: This is the foundational step. It opens the serial port, establishes the Micro-ROS connection with the ESP32, and starts calculating odometry. Without this, the robot is blind and paralyzed.
 Command:
 
-Bash
-ros2 launch turtlebot_bringup robot.launch.py use_sim_time:=false
+   ```bash
+   ros2 launch turtlebot_bringup robot.launch.py use_sim_time:=false
 Wait for the Session established log in the terminal before proceeding.
 
 2. Visualizing the Robot (Description)
 Why: To verify that the URDF transforms are working, allowing you to see a 3D model of your robot in RViz reacting to wheel movements in real-time.
 Command:
 
-Bash
-ros2 launch turtlebot_description display.launch.py
+   ```bash
+   ros2 launch turtlebot_description display.launch.py
 3. Mapping a New Room (SLAM)
 Why: To drive the robot around manually (using teleop) while a LiDAR or depth camera scans the room, generating a 2D floor plan (.yaml and .pgm files) for future autonomous navigation.
 Command:
 
-Bash
-ros2 launch turtlebot_navigation slam.launch.py
+   ```bash
+   ros2 launch turtlebot_navigation slam.launch.py
 4. Autonomous Driving (Nav2)
 Why: To load a previously saved map and allow the robot to calculate its own paths. You click a destination in RViz, and the robot drives there automatically while dodging dynamic obstacles.
 Command:
 
-Bash
-ros2 launch turtlebot_navigation nav2.launch.py
+   ```bash
+   ros2 launch turtlebot_navigation nav2.launch.py
 Headless Autostart Setup (Systemd)
 To achieve true autonomy without requiring an SSH connection to start the software, this project utilizes a Linux systemd service (robot.service).
 
